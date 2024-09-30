@@ -11,13 +11,19 @@ document.querySelector('#currencyConverterForm').addEventListener('submit', func
     axios.get(url)
       .then((res) => {
         rate = res.data.conversion_rates[toCurrency];
+        if (!rate) {
+          showError("Выбранная валютная пара не найдена.")
+          return;
+        }
+
         console.log(res.data.conversion_rates);
-        const convertedAmount = (amount * rate);
+        const convertedAmount = (amount * rate).toFixed(2);
 
         document.querySelector('#result').textContent = `${convertedAmount} ${toCurrency}`;
       })
       .catch((error) => {
-        console.error('errors:', error)
+        console.error('errors:', error);
+        showError("API недоступно. Попробуйте позже.")
       });
   }
 
@@ -37,6 +43,12 @@ async function showKztRate() {
       console.error('errors:', error)
     });
 }
+
+function showError(message) {
+  document.querySelector('#result').textContent = message;
+}
+
+
 window.onload = showKztRate;
 
 
